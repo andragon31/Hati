@@ -1,7 +1,8 @@
 $ErrorActionPreference = "Stop"
 
-$REPO = "andragon31/hati"
+$REPO = "andragon31/Hati"
 $BIN = "hati-windows-amd64.exe"
+$URL = "https://github.com/$REPO/releases/latest/download/$BIN"
 $INSTALL_DIR = "$env:LOCALAPPDATA\Programs\hati"
 $EXE_PATH = "$INSTALL_DIR\hati.exe"
 
@@ -20,18 +21,21 @@ if (Test-Path $EXE_PATH) {
     Write-Host "Hati already installed. Updating..." -ForegroundColor Yellow
 }
 
-Write-Host "[1/3] Compiling Hati (requires Go)..." -ForegroundColor DarkCyan
+Write-Host "[1/3] Downloading Hati..." -ForegroundColor DarkCyan
+$TMP = "$env:TEMP\hati_install_$PID.exe"
 try {
-    if (-not (Test-Path $INSTALL_DIR)) {
-        New-Item -ItemType Directory -Force -Path $INSTALL_DIR | Out-Null
-    }
-    go build -o $EXE_PATH ./cmd/hati
+    Invoke-WebRequest -Uri $URL -OutFile $TMP -UseBasicParsing
 } catch {
-    Write-Host "Error compiling: $_" -ForegroundColor Red
+    Write-Host "Error downloading: $_" -ForegroundColor Red
+    Write-Host "Make sure the release asset '$BIN' exists in GitHub!" -ForegroundColor Gray
     exit 1
 }
 
 Write-Host "[2/3] Installing to $INSTALL_DIR..." -ForegroundColor DarkCyan
+if (-not (Test-Path $INSTALL_DIR)) {
+    New-Item -ItemType Directory -Force -Path $INSTALL_DIR | Out-Null
+}
+Move-Item -Path $TMP -Destination $EXE_PATH -Force
 
 Write-Host "[3/3] Adding to PATH..." -ForegroundColor DarkCyan
 
