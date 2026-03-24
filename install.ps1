@@ -6,7 +6,7 @@ $URL = "https://github.com/$REPO/releases/latest/download/$BIN"
 $INSTALL_DIR = "$env:LOCALAPPDATA\Programs\hati"
 $EXE_PATH = "$INSTALL_DIR\hati.exe"
 
-$VERSION = "v0.1.0"
+$VERSION = "v4.0.0"
 
 Clear-Host
 Write-Host "======================================" -ForegroundColor Cyan
